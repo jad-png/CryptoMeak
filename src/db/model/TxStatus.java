@@ -1,6 +1,6 @@
 package db.model;
 
-public enum TransactionStatus {
+public enum TxStatus {
 	PENDING, 
 	CONFIRMED, 
 	REJECTED
