@@ -1,5 +1,7 @@
 package db.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Wallet {
@@ -7,12 +9,14 @@ public class Wallet {
 	private String address;
 	private double balance;
 	private CryptoType type;
+	private List<Transaction> txs;
 	
 	public Wallet(UUID id, CryptoType type, String address, double balance) {
 		this.id = id;
 		this.address = address;
 		this.balance = balance;
 		this.type = type;
+		this.txs = new ArrayList<>();
 	}
 	
 	public UUID getId() { return id; }
@@ -22,4 +26,8 @@ public class Wallet {
 	
 	// TODO: add addTrasaction() method that implement one parametre tx type of Transaction entity 
 	// that add transatction to list of transaction
+	
+	public void addTransaction(Transaction tx) {
+		txs.add(tx);
+	}
 }
