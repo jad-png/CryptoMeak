@@ -1,0 +1,25 @@
+package db.model;
+
+import java.util.UUID;
+
+public class Wallet {
+	private UUID id;
+	private String address;
+	private double balance;
+	private CryptoType type;
+	
+	public Wallet(UUID id, CryptoType type, String address, double balance) {
+		this.id = id;
+		this.address = address;
+		this.balance = balance;
+		this.type = type;
+	}
+	
+	public UUID getId() { return id; }
+	public CryptoType getType() { return type; }
+	public String getAddress() { return address; }
+	public double getBalance() { return balance; }
+	
+	// TODO: add addTrasaction() method that implement one parametre tx type of Transaction entity 
+	// that add transatction to list of transaction
+}
