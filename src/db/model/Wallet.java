@@ -11,10 +11,10 @@ public class Wallet {
 	private CryptoType type;
 	private List<Transaction> txs;
 	
-	public Wallet(UUID id, CryptoType type, String address, double balance) {
+	public Wallet(UUID id, CryptoType type, String address) {
 		this.id = id;
 		this.address = address;
-		this.balance = balance;
+		this.balance = 0;
 		this.type = type;
 		this.txs = new ArrayList<>();
 	}
