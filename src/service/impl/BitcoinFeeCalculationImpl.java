@@ -3,6 +3,7 @@ package service.impl;
 import db.model.CryptoType;
 import db.model.FeePriority;
 import db.model.Wallet;
+import service.interfase.CalculationFee;
 
 public class BitcoinFeeCalculationImpl implements CalculationFee {
 	private static final int STANDARD_TX_SIZE = 250; // bytes

@@ -2,6 +2,7 @@ package service.impl;
 
 import db.model.FeePriority;
 import db.model.Wallet;
+import service.interfase.CalculationFee;
 import db.model.CryptoType;
 
 public class EtheriumFeeCalculationImpl implements CalculationFee {

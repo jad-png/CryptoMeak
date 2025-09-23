@@ -1,4 +1,4 @@
-package service.impl;
+package service.interfase;
 
 import db.model.FeePriority;
 import db.model.Wallet;

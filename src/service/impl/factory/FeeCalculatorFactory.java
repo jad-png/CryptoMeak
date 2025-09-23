@@ -3,6 +3,7 @@ package service.impl.factory;
 import db.model.CryptoType;
 import db.model.Wallet;
 import service.impl.*;
+import service.interfase.CalculationFee;
 
 public class FeeCalculatorFactory {
 	
