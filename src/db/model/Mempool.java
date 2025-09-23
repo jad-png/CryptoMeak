@@ -25,7 +25,7 @@ public class Mempool {
 	}
 	
 	// pending requests in order
-	public List<Transaction> getAllTransactions() {
+	public List<Transaction> getPendingTransactions() {
 		return new ArrayList<>(queue);
 	}
 	
