@@ -27,7 +27,7 @@ public class Transaction {
 	
 	public String getId() { return id; }
     public String getSourceAddress() { return srcAddress; }
-    public String getDestinationAddress() { return desAddress; }
+    public String getDesAddress() { return desAddress; }
     public double getAmount() { return amount; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public double getFees() { return fees; }

@@ -44,11 +44,17 @@ public class Wallet {
 	public String getAddress() { return address; }
 	public double getBalance() { return balance; }
 	
-	// TODO: add addTrasaction() method that implement one parametre tx type of Transaction entity 
-	// that add transatction to list of transaction
-	
 	public void addTransaction(Transaction tx) {
-		txs.add(tx);
+		if (txs != null) {
+			txs.add(tx);
+			
+			
+			if (tx.getSourceAddress().equals(this.address)) {
+				this.balance -= (tx.getAmount() + tx.getFees());
+			} else if (tx.getDesAddress().equals(this.address)) {
+				this.balance += tx.getAmount();
+			}
+		}
 	}
 	
 	public String generateCryptoAddress(CryptoType type) {
@@ -88,6 +94,4 @@ public class Wallet {
 		
 		return true;
 	}
-	
-	
 }
