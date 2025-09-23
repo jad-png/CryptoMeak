@@ -65,4 +65,12 @@ public class Wallet {
             throw new IllegalArgumentException("Unsupported crypto type: " + type);
 		}
 	}
+	
+	public void depost(double amount) {
+		if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+		}
+		
+		this.balance += amount;
+	}
 }
