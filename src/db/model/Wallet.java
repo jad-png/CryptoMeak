@@ -39,11 +39,18 @@ public class Wallet {
 		this.txs = new ArrayList<>();	
 	}
 	
+	// getters
 	public UUID getId() { return id; }
 	public CryptoType getType() { return type; }
 	public String getAddress() { return address; }
 	public double getBalance() { return balance; }
+	public List<Transaction> getTransactions() { return new ArrayList<>(txs); }
 	
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+	
+	// add transaction and auto update balance based on transaction
 	public void addTransaction(Transaction tx) {
 		if (txs != null) {
 			txs.add(tx);
@@ -57,6 +64,7 @@ public class Wallet {
 		}
 	}
 	
+	// generate wallet address
 	public String generateCryptoAddress(CryptoType type) {
 		Random random = new Random();
 		String baseId = UUID.randomUUID().toString().replace("-", "").substring(0, 32);
@@ -72,26 +80,26 @@ public class Wallet {
 		}
 	}
 	
-	public void deposit(double amount) {
-		if (amount <= 0) {
-            throw new IllegalArgumentException("Deposit amount must be positive");
-		}
-		
-		this.balance += amount;
-	}
-	
-	public boolean withdraw(double amount) {
-		
-	      if (amount <= 0) {
-	            throw new IllegalArgumentException("Withdrawal amount must be positive");
-	        }
-	      
-		if (amount > balance) {
-			return false;
-		}
-		
-		this.balance -= amount;
-		
-		return true;
-	}
+//	public void deposit(double amount) {
+//		if (amount <= 0) {
+//            throw new IllegalArgumentException("Deposit amount must be positive");
+//		}
+//		
+//		this.balance += amount;
+//	}
+//	
+//	public boolean withdraw(double amount) {
+//		
+//	      if (amount <= 0) {
+//	            throw new IllegalArgumentException("Withdrawal amount must be positive");
+//	        }
+//	      
+//		if (amount > balance) {
+//			return false;
+//		}
+//		
+//		this.balance -= amount;
+//		
+//		return true;
+//	}
 }
