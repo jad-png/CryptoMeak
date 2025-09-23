@@ -66,4 +66,27 @@ public class Mempool {
 	        queue.add(tx);
 	    }
 	}
+	
+	// display mempool details
+	public void displayMempool(Transaction myTx) {
+        List<Transaction> sorted = new ArrayList<>(queue);
+        sorted.sort(Comparator.comparingDouble(Transaction::getFees).reversed());
+
+        System.out.println("=== ÉTAT DU MEMPOOL ===");
+        System.out.println("Transactions en attente : " + sorted.size());
+        System.out.println("┌──────────────────────────────────┬────────┐");
+        System.out.println("│ Transaction (autres utilisateurs) │ Frais │");
+        System.out.println("├──────────────────────────────────┼───────┤");
+
+        for (Transaction tx : sorted) {
+            String shortId = tx.getSourceAddress().substring(0, 7) + "...";
+            if (myTx != null && tx.equals(myTx)) {
+                System.out.printf("│ >>> VOTRE TX: %-20s │ %.2f$ │%n", shortId, tx.getFees());
+            } else {
+                System.out.printf("│ %-30s │ %.2f$ │%n", shortId, tx.getFees());
+            }
+        }
+
+        System.out.println("└──────────────────────────────────┴────────┘");
+    }
 }
