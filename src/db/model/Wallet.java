@@ -66,11 +66,28 @@ public class Wallet {
 		}
 	}
 	
-	public void depost(double amount) {
+	public void deposit(double amount) {
 		if (amount <= 0) {
             throw new IllegalArgumentException("Deposit amount must be positive");
 		}
 		
 		this.balance += amount;
 	}
+	
+	public boolean withdraw(double amount) {
+		
+	      if (amount <= 0) {
+	            throw new IllegalArgumentException("Withdrawal amount must be positive");
+	        }
+	      
+		if (amount > balance) {
+			return false;
+		}
+		
+		this.balance -= amount;
+		
+		return true;
+	}
+	
+	
 }
