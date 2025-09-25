@@ -1,0 +1,22 @@
+package service.interfaces;
+
+import model.Transaction;
+import model.enums.Currency;
+import model.enums.TxPriority;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+public interface ITransactionService {
+    Transaction createTransaction(String srdAddress, String desAddress, BigDecimal amount, TxPriority oriority, Currency currency);
+    Optional<Transaction> getTransactionById(UUID id);
+    List<Transaction> getAllTransactions();
+    List<Transaction> getTxsBySrcAddress(String srcAddress);
+    List<Transaction>  getPendingTxs();
+    boolean confirmTx(UUID txId);
+    boolean rejectTx(UUID txId);
+    BigDecimal calculateFee(BigDecimal amount, TxPriority priority, Currency currency);
+    public BigDecimal getTotalFees(Currency currency);
+    }
