@@ -1,6 +1,6 @@
 package model.enums;
 
-public enum WalletType {
+public enum Currency {
     BITCOIN,
     ETHEREUM
 }

@@ -1,23 +1,29 @@
 package service.impl;
 
+import config.DIContainer;
 import model.Wallet;
-import model.enums.WalletType;
-import repository.WalletRepository;
+import model.enums.Currency;
+import repository.interfaces.IWalletRepository;
 import service.interfaces.IWalletService;
+import utils.AddressGenerator;
 import utils.WalletUtils;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class WalletService implements IWalletService {
-    private WalletRepository repo;
+    private IWalletRepository repo;
 
-    public void WalletRepository(WalletRepository WalletRepo) {
-        this.repo = WalletRepo;
+
+    public void WalletRepository() throws SQLException {
+        DIContainer DIC = DIContainer.getInstance();
+        this.repo = DIC.getWtRepo();
     }
 
     @Override
-    public Wallet createWallet(WalletType type) {
-        Wallet wallet = new Wallet(type, WalletUtils.generateCryptoAddress(type));
+    public Wallet createWallet(Currency type) {
+        String address = AddressGenerator.generateAddress(type);
+        Wallet wallet = new Wallet(type, address);
         repo.save(wallet);
         return wallet;
     }
