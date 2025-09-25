@@ -1,7 +1,7 @@
 package controller;
 
 import model.Wallet;
-import model.enums.WalletType;
+import model.enums.Currency;
 import service.impl.WalletService;
 
 import java.util.Optional;
@@ -13,7 +13,7 @@ public class WalletController {
         this.walletSer = ser;
     }
 
-    public Wallet createWallet(WalletType type) {
+    public Wallet createWallet(Currency type) {
         return walletSer.createWallet(type);
     }
 
