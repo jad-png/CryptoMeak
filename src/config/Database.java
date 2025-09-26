@@ -24,7 +24,7 @@ public class Database {
         }
         return instance;
     }
-
+// TODO: static block
     public Connection getConn() throws SQLException {
         if (conn == null || conn.isClosed()) {
             conn = DriverManager.getConnection(URL, USER, PASS);
