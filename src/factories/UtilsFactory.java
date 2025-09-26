@@ -2,6 +2,7 @@ package factories;
 
 import repository.interfaces.ITransactionRepository;
 import repository.interfaces.IWalletRepository;
+import utils.PasswordUtil;
 import utils.TransactionUtils;
 import utils.WalletUtils;
 
