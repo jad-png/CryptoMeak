@@ -10,7 +10,7 @@ import java.util.Optional;
 public class AuthRepositoryImpl implements IAuthRepository {
     public final Connection conn;
 
-    public  AuthRepositoryImpl(Connection conn) throws SQLException {
+    public  AuthRepositoryImpl() throws SQLException {
         this.conn = Database.getInstance().getConn();
     }
 

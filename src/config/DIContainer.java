@@ -1,8 +1,10 @@
 package config;
 
 import factories.UtilsFactory;
+import repository.AuthRepositoryImpl;
 import repository.TransactionRepository;
 import repository.WalletRepository;
+import repository.interfaces.IAuthRepository;
 import repository.interfaces.ITransactionRepository;
 import repository.interfaces.IWalletRepository;
 import utils.TransactionUtils;
@@ -15,10 +17,12 @@ public class DIContainer {
     private final ITransactionRepository txrepo;
     private final IWalletRepository wtRepo;
     private final UtilsFactory UtFactory;
+    private final IAuthRepository authRepo;
 
     private DIContainer () throws SQLException {
         this.txrepo = new TransactionRepository();
         this.wtRepo = new WalletRepository();
+        this.authRepo = new AuthRepositoryImpl();
 
         this.UtFactory = new UtilsFactory(txrepo, wtRepo);
     }
@@ -39,6 +43,8 @@ public class DIContainer {
         return wtRepo;
     }
 
+    public IAuthRepository getAuthRepo() { return authRepo; }
+    
     public TransactionUtils getTransactionUtils() {
         return UtFactory.createTransactionUtils();
     }
