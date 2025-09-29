@@ -15,7 +15,9 @@ import utils.WalletUtils;
 
 import java.sql.SQLException;
 
+import controller.AuthController;
 import controller.TransactionController;
+import controller.WalletController;
 
 public class DIContainer {
     private static DIContainer instance;
@@ -29,6 +31,10 @@ public class DIContainer {
     private final WalletService wtSer;
     private final AuthServiceImpl authSer;
 
+    private final AuthController authCon;
+    private final TransactionController txCon;
+    private final WalletController wtCon;
+
 
     private DIContainer () throws SQLException {
         this.txrepo = new TransactionRepository();
@@ -40,6 +46,10 @@ public class DIContainer {
         this.txSer = new TransactionService();
         this.wtSer = new WalletService();
         this.authSer = new AuthServiceImpl();
+
+        this.authCon = new AuthController();
+        this.txCon = new TransactionController();
+        this.wtCon = new WalletController();
     }
 
     public static synchronized DIContainer getInstance() throws SQLException {
@@ -50,6 +60,7 @@ public class DIContainer {
         return instance;
     }
 
+    // repositories
     public ITransactionRepository getTxRepo() {
         return txrepo;
     }
@@ -60,6 +71,7 @@ public class DIContainer {
 
     public IAuthRepository getAuthRepo() { return authRepo; }
     
+    // utils
     public TransactionUtils getTransactionUtils() {
         return UtFactory.createTransactionUtils();
     }
@@ -68,10 +80,12 @@ public class DIContainer {
         return UtFactory.createWalletUtils();
     }
 
+    // factories
     public UtilsFactory getUtilsFactory() {
         return UtFactory;
     }
 
+    // services
     public TransactionService getTxSer() {
         return txSer;
     }
@@ -82,5 +96,18 @@ public class DIContainer {
 
     public AuthServiceImpl getAuthSer() {
         return authSer;
+    }
+
+    // controllers
+    public AuthController getAuthCon() {
+        return authCon;
+    }
+
+    public TransactionController getTxCon() {
+        return txCon;
+    }
+
+    public WalletController getWtCon() {
+        return wtCon;
     }
 }
