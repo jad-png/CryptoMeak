@@ -1,7 +1,9 @@
 package controller;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
+import config.DIContainer;
 import model.Wallet;
 import service.impl.AuthServiceImpl;
 import service.result.AuthResult;
@@ -9,8 +11,9 @@ import service.result.AuthResult;
 public class AuthController {
     private final AuthServiceImpl authSer;
 
-    public AuthController(AuthServiceImpl authSer) {
-        this.authSer = authSer;
+    public AuthController() throws SQLException {
+            DIContainer DIC = DIContainer.getInstance();
+            this.authSer = DIC.getAuthSer();
     }
 
     public AuthResult registerWallet(Wallet wt, String pswrd) {

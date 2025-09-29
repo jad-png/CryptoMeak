@@ -4,13 +4,17 @@ import model.Wallet;
 import model.enums.Currency;
 import service.impl.WalletService;
 
+import java.sql.SQLException;
 import java.util.Optional;
+
+import config.DIContainer;
 
 public class WalletController {
     private WalletService walletSer;
 
-    public WalletController(WalletService ser) {
-        this.walletSer = ser;
+    public WalletController() throws SQLException {
+        DIContainer DIC = DIContainer.getInstance();
+        this.walletSer = DIC.getWtSer();
     }
 
     public Wallet createWallet(Currency type) {

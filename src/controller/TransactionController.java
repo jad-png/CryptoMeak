@@ -1,10 +1,12 @@
 package controller;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import config.DIContainer;
 import model.Transaction;
 import model.Wallet;
 import model.enums.Currency;
@@ -16,9 +18,10 @@ public class TransactionController {
     private final TransactionService txSer;
     private final AuthServiceImpl authSer;
 
-    public TransactionController(TransactionService txSer, AuthServiceImpl authSer) {
-        this.txSer = txSer;
-        this.authSer = authSer;
+    public TransactionController() throws SQLException {
+            DIContainer DIC = DIContainer.getInstance();
+            this.txSer = DIC.getTxSer();
+            this.authSer = DIC.getAuthSer();
     }
 
 
