@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import model.enums.Currency;
 
-import javax.swing.text.html.Option;
 
 public interface IWalletRepository extends Repository<Wallet>{
     // Methodes for Tx service
