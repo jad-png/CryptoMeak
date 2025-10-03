@@ -43,8 +43,7 @@ CryptoMeak simulates a cryptocurrency wallet system with support for Bitcoin and
 ## How to Build and Run
 
 ### **Prerequisites**
-- Java 11 or higher
-- Maven or Gradle (for building)
+- Java 8 or higher
 - PostgreSQL (running and accessible)
 - PostgreSQL JDBC Driver (`lib/postgresql-42.7.8.jar`)
 
@@ -54,23 +53,7 @@ CryptoMeak simulates a cryptocurrency wallet system with support for Bitcoin and
 
 ### **Build JAR**
 
-**With Maven:**
-1. Create a `pom.xml` (if not present) and add dependencies for PostgreSQL.
-2. Run:
-   ```sh
-   mvn clean package
-   ```
-   The JAR will be in `target/`.
-
-**With Gradle:**
-1. Create a `build.gradle` and configure dependencies.
-2. Run:
-   ```sh
-   gradle build
-   ```
-   The JAR will be in `build/libs/`.
-
-**Or, using `javac` and `jar` directly:**
+** using `javac` and `jar` directly:**
 ```sh
 cd src
 javac -cp "../lib/postgresql-42.7.8.jar" -d ../out $(find . -name "*.java")
@@ -106,15 +89,3 @@ java -cp "CryptoMeak.jar:lib/postgresql-42.7.8.jar" Main
 
 - Add new commands by implementing the `Command` interface and registering in `CommandManager`.
 - Add new currencies or fee strategies by extending the fee calculator classes and updating factories.
-
----
-
-## Authors
-
-- [Your Name Here]
-
----
-
-## License
-
-MIT License (or specify your own)
