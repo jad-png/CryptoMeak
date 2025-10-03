@@ -18,10 +18,9 @@ public class TransactionController {
     private final TransactionService txSer;
     private final AuthServiceImpl authSer;
 
-    public TransactionController() throws SQLException {
-            DIContainer DIC = DIContainer.getInstance();
-            this.txSer = DIC.getTxSer();
-            this.authSer = DIC.getAuthSer();
+    public TransactionController(TransactionService txSer, AuthServiceImpl authSer) {
+            this.txSer = txSer;
+            this.authSer = authSer;
     }
 
 
@@ -49,10 +48,6 @@ public class TransactionController {
 
     public List<Transaction> getTxsByCurrency(Currency currency) {
         return txSer.getTxsByCurrency(currency);
-    }
-
-    public List<Transaction> getPendingTxs() {
-        return txSer.getPendingTxs();
     }
 
     // state management methods 
