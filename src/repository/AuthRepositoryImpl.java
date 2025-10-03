@@ -10,19 +10,17 @@ import java.util.Optional;
 public class AuthRepositoryImpl implements IAuthRepository {
     public final Connection conn;
 
-    public  AuthRepositoryImpl() throws SQLException {
+    public AuthRepositoryImpl() throws SQLException {
         this.conn = Database.getInstance().getConn();
     }
 
     @Override
     public void saveWalletAuth(String wtAddress, String passwordHash) {
-        String sql = "INSERT INTO wallet_auth (wallet_address, password_hash, created_at, last_login)" + "VALUES (?, ?, ?, ?)";
+        String sql = "UPDATE wallets SET password = ? WHERE address = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, wtAddress);
-            stmt.setString(2, passwordHash);
-            stmt.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-            stmt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setString(1, passwordHash);
+            stmt.setString(2, wtAddress);
 
             stmt.execute();
         } catch (SQLException e) {
@@ -32,14 +30,14 @@ public class AuthRepositoryImpl implements IAuthRepository {
 
     @Override
     public Optional<String> getPasswordHash(String wtAddress) {
-        String sql = "SELECT password_hash FROM wallet_auth WHERE wallet_address = ?";
+        String sql = "SELECT password FROM wallets WHERE address = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, wtAddress);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(rs.getString("password_hash"));
+                return Optional.of(rs.getString("password"));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error getting password hash", e);
@@ -49,7 +47,7 @@ public class AuthRepositoryImpl implements IAuthRepository {
 
     @Override
     public boolean walletExists(String wtAddress) {
-        String sql = "SELECT COUNT(*) FORM wallet_auth WHERE wallet_addres = ?";
+        String sql = "SELECT COUNT(*) FROM wallets WHERE address = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, wtAddress);
@@ -66,7 +64,7 @@ public class AuthRepositoryImpl implements IAuthRepository {
 
     @Override
     public void updateLastLogin(String wtAddress) {
-        String sql = "UPDATE wallet_auth SET last_login = ? WHERE wallet_address = ?";
+        String sql = "UPDATE wallets SET last_login = ? WHERE address = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
@@ -79,7 +77,7 @@ public class AuthRepositoryImpl implements IAuthRepository {
 
     @Override
     public void updatePassword(String wtAddress, String newHashPassword) {
-        String sql = "UPDATE wallet_auth SET password_hash = ? WHERE wallet_address = ?";
+        String sql = "UPDATE wallets SET password_hash = ? WHERE address = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, newHashPassword);
@@ -92,7 +90,7 @@ public class AuthRepositoryImpl implements IAuthRepository {
 
     @Override
     public boolean deleteWtAuth(String wtAddress) {
-        String sql = "DELETE FROM wallet_auth WHERE wallet_address = ?";
+        String sql = "DELETE FROM wallets WHERE address = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, wtAddress);
