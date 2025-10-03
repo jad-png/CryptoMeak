@@ -12,4 +12,9 @@ public interface ITransactionRepository extends Repository<Transaction> {
     List<Transaction> findByStatus(TxStatus status);
     List<Transaction> findByCurrency(Currency currency);
     boolean existingPendingTx(String srcAddress);
+
+    List<Transaction> findPendingTransactionsSortedByFees();
+    List<Transaction> findPendingTransactionsByAddress(String address);
+    int getTransactionPosition(String txId);
+    int countPendingTransactions(); // mempoos size
 }
