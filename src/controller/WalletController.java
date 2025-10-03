@@ -12,9 +12,8 @@ import config.DIContainer;
 public class WalletController {
     private WalletService walletSer;
 
-    public WalletController() throws SQLException {
-        DIContainer DIC = DIContainer.getInstance();
-        this.walletSer = DIC.getWtSer();
+    public WalletController(WalletService wtSer) {
+        this.walletSer = wtSer;
     }
 
     public Wallet createWallet(Currency type) {
