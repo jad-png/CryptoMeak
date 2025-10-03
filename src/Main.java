@@ -1,15 +1,36 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
+import config.DIContainer;
+import controller.AuthController;
+import controller.TransactionController;
+import controller.WalletController;
+import ui.CommandManager;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        try {
+            DIContainer DIC = DIContainer.getInstance();
+            CommandManager cmdManager = DIC.getCommandManager();
+            
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+            while (true) {
+                System.out.print("/n Commande >");
+                String input = cmdManager.getScanner().nextLine().trim();
+
+                if (input.equalsIgnoreCase("exit")) {
+                    System.out.println("Exiting...");
+                    // TODO: add method to clean up resources from DIC
+                    break;
+                }
+
+                if (!cmdManager.execute(input)) {
+                    System.out.println("Unknown command. Type 'help' for a list of commands.");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Critical error: " + e.getMessage());
+            System.exit(1);
         }
     }
 }
