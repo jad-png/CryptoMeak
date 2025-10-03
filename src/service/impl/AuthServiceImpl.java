@@ -22,11 +22,10 @@ public class AuthServiceImpl {
     // authenticated wallets cache, sessionId -> Wallet
     private final ConcurrentHashMap<String, Wallet> authenticatedWallets;
 
-    public AuthServiceImpl() throws SQLException {
-        DIContainer DIC = DIContainer.getInstance();
+    public AuthServiceImpl(IAuthRepository authRepo, IWalletRepository wtRepo) {
 
-        this.authRepo = DIC.getAuthRepo();
-        this.wtRepo = DIC.getWtRepo();
+        this.authRepo = authRepo;
+        this.wtRepo = wtRepo;
 
         this.activeSessions = new ConcurrentHashMap<>();
         this.authenticatedWallets = new ConcurrentHashMap<>();
@@ -46,10 +45,12 @@ public class AuthServiceImpl {
                 return AuthResult.error("Password must have been more than 4 digits");
             }
 
+            String passwordHash = PasswordUtil.hashPassword(pswrd);
+
+            wt.setPasswordHash(passwordHash);
+
             wtRepo.save(wt);
 
-
-            String passwordHash = PasswordUtil.hashPassword(pswrd);
 
             return AuthResult.success(wt, "Wallet save successfully");
         } catch (Exception e) {
@@ -61,21 +62,19 @@ public class AuthServiceImpl {
         try {
             Optional<Wallet> wtOpt = wtRepo.findByAddress(wtAddress);
 
+            
+            
             if (!wtOpt.isPresent()) {
                 return AuthResult.error("Wallet not found");
             }
+                        
+            System.err.println(wtOpt.get().getPasswordHash());
 
-            Optional<String> storedHashOpt = authRepo.getPasswordHash(wtAddress);
-
-            if (!storedHashOpt.isPresent()) {
-                return AuthResult.error("Password hash not found");
-            }
-
-            if (!PasswordUtil.verifyPassword(pswrd, storedHashOpt.get())) {
+            if (!PasswordUtil.verifyPassword(pswrd, wtOpt.get().getPasswordHash())) {
                 return AuthResult.error("Wrong password");
             }
 
-            authRepo.updateLastLogin(wtAddress);
+            // authRepo.updateLastLogin(wtAddress);
 
             // create new session
             String sessionId = generateSessionId();
