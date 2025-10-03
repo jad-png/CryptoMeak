@@ -1,7 +1,6 @@
 package service.impl;
 
 import calculators.IFeeCalculator;
-import config.DIContainer;
 import factories.FeeCalculatorFactory;
 import factories.UtilsFactory;
 import model.Transaction;
@@ -16,7 +15,6 @@ import utils.TransactionUtils;
 import utils.WalletUtils;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -30,13 +28,12 @@ public class TransactionService implements ITransactionService {
     private final WalletUtils wtUtils;
 
 
-    public TransactionService() throws SQLException {
-        DIContainer DIC = DIContainer.getInstance();
+    public TransactionService(ITransactionRepository txRepo, IWalletRepository wtRepo, TransactionUtils txUtils, WalletUtils wtUtils) {
 
-        this.txRepo = DIC.getTxRepo();
-        this.wtRepo = DIC.getWtRepo();
-        this.txUtils = DIC.getTransactionUtils();
-        this.wtUtils = DIC.getWalletUtils();
+        this.txRepo = txRepo;
+        this.wtRepo = wtRepo;
+        this.txUtils = txUtils;
+        this.wtUtils = wtUtils;
     }
 
     @Override
@@ -73,6 +70,7 @@ public class TransactionService implements ITransactionService {
         return tx;
     }
 
+    // read methods
     @Override
     public Optional<Transaction> getTransactionById(UUID id) {
         return txRepo.findById(id.toString());
@@ -82,7 +80,6 @@ public class TransactionService implements ITransactionService {
     public List<Transaction> getAllTransactions() {
         return txRepo.findAll();
     }
-
     @Override
     public List<Transaction> getTxsBySrcAddress(String srcAddress) {
         return txRepo.findBySrcAddress(srcAddress);
@@ -94,15 +91,6 @@ public class TransactionService implements ITransactionService {
 
     public List<Transaction> getTxsByCurrency(Currency currency) {
         return txRepo.findByCurrency(currency);
-    }
-
-    public List<Transaction> getTxsByStatus(TxStatus status) {
-        return txRepo.findByStatus(status);
-    }
-
-    @Override
-    public List<Transaction> getPendingTxs() {
-        return txRepo.findByStatus(TxStatus.PENDING);
     }
 
     @Override

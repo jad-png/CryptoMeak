@@ -15,9 +15,8 @@ public class WalletService implements IWalletService {
     private IWalletRepository repo;
 
 
-    public void WalletRepository() throws SQLException {
-        DIContainer DIC = DIContainer.getInstance();
-        this.repo = DIC.getWtRepo();
+    public WalletService(IWalletRepository wtRepo) {
+        this.repo = wtRepo;
     }
 
     @Override
