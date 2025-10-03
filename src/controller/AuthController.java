@@ -11,9 +11,8 @@ import service.result.AuthResult;
 public class AuthController {
     private final AuthServiceImpl authSer;
 
-    public AuthController() throws SQLException {
-            DIContainer DIC = DIContainer.getInstance();
-            this.authSer = DIC.getAuthSer();
+    public AuthController(AuthServiceImpl authSer) {
+            this.authSer = authSer;
     }
 
     public AuthResult registerWallet(Wallet wt, String pswrd) {
