@@ -10,8 +10,31 @@ CryptoMeak simulates a cryptocurrency wallet system with support for Bitcoin and
 
 ---
 
-## Architecture & Design Patterns
+### Project Folder Structure
 
+```
+CryptoMeak/
+├── src/
+│   ├── controller/           # Controllers for business logic orchestration
+│   ├── model/                # Domain models (Wallet, Transaction, enums, etc.)
+│   ├── repository/           # Data access and persistence layer
+│   ├── service/              # Business logic and service implementations
+│   ├── ui/
+│   │   ├── command/          # Command pattern implementations for CLI
+│   │   └── CommandManager.java
+│   └── Main.java             # Application entry point
+├── images/                   # UML diagrams and other images
+│   └── Main.png
+├── lib/                      # External libraries (e.g., JDBC driver)
+├── schema.sql                # Database schema for PostgreSQL
+├── README.md                 # Project documentation
+├── .gitignore                # Git ignore rules
+```
+
+---
+
+## Architecture & Design Patterns
+ 
 ### 1. **Layered Architecture**
 - **UI Layer:** Command-line interface using the Command pattern for extensible commands (`ui/command/`).
 - **Controller Layer:** Orchestrates business logic and mediates between UI and services (`controller/`).
