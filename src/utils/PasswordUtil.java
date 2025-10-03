@@ -3,10 +3,10 @@ package utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
 public class PasswordUtil {
 
-    private PasswordUtil(){}
+    private PasswordUtil() {
+    }
 
     public static String hashPassword(String password) {
         try {
@@ -21,8 +21,11 @@ public class PasswordUtil {
             throw new RuntimeException("Failed to hash password using SHA-256");
         }
     }
+
     public static boolean verifyPassword(String password, String hashedPassword) {
-        return hashPassword(password).equals(hashedPassword);
+        String input = hashPassword(password);
+        System.out.println(input + "||" + hashedPassword);
+        return input.equals(hashedPassword);
     }
 
 }

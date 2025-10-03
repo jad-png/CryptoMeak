@@ -1,6 +1,7 @@
 package config;
 
 import factories.UtilsFactory;
+import model.Wallet;
 import repository.AuthRepositoryImpl;
 import repository.TransactionRepository;
 import repository.WalletRepository;
@@ -17,6 +18,8 @@ import utils.TransactionUtils;
 import utils.WalletUtils;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import controller.AuthController;
 import controller.MempoolController;
@@ -41,6 +44,8 @@ public class DIContainer {
     private final WalletController wtCon;
     private final MempoolController mpCon;
 
+    private final List<Wallet> wts = new ArrayList<>();
+
     private final CommandManager cmdManager;
 
     private DIContainer() throws SQLException {
@@ -53,7 +58,8 @@ public class DIContainer {
         this.txSer = new TransactionService(this.txrepo,
                 this.wtRepo,
                 this.UtFactory.createTransactionUtils(),
-                this.UtFactory.createWalletUtils());
+                this.UtFactory.createWalletUtils(),
+                this.wts);
 
         this.wtSer = new WalletService(this.wtRepo);
         this.authSer = new AuthServiceImpl(this.authRepo, this.wtRepo);

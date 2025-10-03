@@ -2,6 +2,7 @@ package controller;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import model.Transaction;
 import model.Wallet;
 import model.enums.Currency;
 import model.enums.TxPriority;
+import model.enums.TxStatus;
 import service.impl.AuthServiceImpl;
 import service.impl.TransactionService;
 
@@ -26,7 +28,13 @@ public class TransactionController {
 
     // TODO: add method that show menu
     public Transaction createTransaction(String srcAddress, String destAddress, BigDecimal amount, TxPriority priority, Currency currency) {
-        return txSer.createTransaction(srcAddress, destAddress, amount, priority, currency);
+        UUID id = UUID.randomUUID();
+        BigDecimal fee = txSer.calculateFee(amount, priority, currency);
+        TxStatus status = TxStatus.PENDING;
+        LocalDateTime createdAt = LocalDateTime.now();
+        LocalDateTime updatedAt = createdAt;
+        Transaction tx = new Transaction(id, srcAddress, destAddress, amount, fee, status, priority, currency, createdAt, updatedAt);
+        return txSer.createTransaction(tx);
     }
 
     // retrieve data methods
@@ -76,5 +84,10 @@ public class TransactionController {
     public Optional<Wallet> getAuthenticatedWallet(String sessionId) {
         return authSer.getAuthenticatedWallet(sessionId);
     } 
+
+    public List<Transaction> generateRandomTransactions(int c) {
+        return txSer.generateRandomTransactions(c);
+    }
 }
+
 

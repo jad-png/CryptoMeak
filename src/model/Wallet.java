@@ -11,7 +11,7 @@ import java.util.UUID;
 public class Wallet {
     private final String id;
     private String address;
-    private double balance;
+    private BigDecimal balance;
     private String ownerName;
     private String wtName;
     private Currency currency;
@@ -22,7 +22,7 @@ public class Wallet {
     public Wallet(Currency currency, String address) {
         this.id = UUID.randomUUID().toString();
         this.address = address;
-        this.balance = 0.0;
+        this.balance = BigDecimal.ZERO;
         this.currency = currency;
         this.createdAt = LocalDateTime.now();
         this.transactions = new ArrayList<>();
@@ -30,7 +30,7 @@ public class Wallet {
     private Wallet(Builder builder) {
         this.id = builder.id;
         this.address = builder.address;
-        this.balance = builder.balance != null ? builder.balance : 0.0;
+        this.balance = builder.balance != null ? builder.balance : BigDecimal.ZERO;
         this.ownerName = builder.ownerName;
         this.wtName = builder.wtName;
         this.currency = builder.currency;
@@ -42,7 +42,7 @@ public class Wallet {
     public static class Builder {
         private String id;
         private String address;
-        private Double balance;
+        private BigDecimal balance;
         private String ownerName;
         private String wtName;
         private Currency currency;
@@ -51,7 +51,7 @@ public class Wallet {
 
         public Builder id(String id) { this.id = id; return this; }
         public Builder address(String address) { this.address = address; return this; }
-        public Builder balance(Double balance) { this.balance = balance; return this; }
+        public Builder balance(BigDecimal balance) { this.balance = balance; return this; }
         public Builder ownerName(String ownerName) { this.ownerName = ownerName; return this; }
         public Builder wtName(String wtName) { this.wtName = wtName; return this; }
         public Builder currency(Currency currency) { this.currency = currency; return this; }
@@ -73,7 +73,7 @@ public class Wallet {
         return this.address;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return this.balance;
     }
 
@@ -106,7 +106,7 @@ public class Wallet {
         this.address = address;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

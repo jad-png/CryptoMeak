@@ -28,9 +28,9 @@ public class CreateTransactionCommand implements Command {
     }
 
     public void execute(CommandContext context) {
-        // System.out.println("\n" + "=");
-        // System.out.println("CREATE NEW TRANSACTION");
-        // System.out.println("=");
+        System.out.println("\n" + "================================================");
+        System.out.println("CREATE NEW TRANSACTION");
+        System.out.println("=================================================");
 
         try {
             // STEP 1: create needed variables

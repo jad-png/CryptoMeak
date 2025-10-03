@@ -42,17 +42,17 @@ public class RegisterWalletCommand implements Command {
         String wtName = collectWalletName();
         String password = collectPassword();
 
-        String address = AddressGenerator.generateAddress(currency);
-
         Wallet wt = new Wallet.Builder()
                 .id(UUID.randomUUID().toString())
-                .address(address)
                 .ownerName(ownerName)
                 .wtName(wtName)
                 .currency(currency)
-                .balance(0.0)
+                .balance(BigDecimal.ZERO)
                 .createdAt(LocalDateTime.now())
                 .build();
+
+        String address = AddressGenerator.generateAddress(wt);
+        wt.setAddress(address);
 
         AuthResult rs = authCon.registerWallet(wt, password);
 

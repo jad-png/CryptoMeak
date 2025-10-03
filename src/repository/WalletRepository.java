@@ -28,7 +28,7 @@ public class WalletRepository implements IWalletRepository {
             stmt.setString(2, wallet.getAddress());
             stmt.setString(3, wallet.getOwnerName());
             stmt.setString(4, wallet.getWtName());
-            stmt.setDouble(5, wallet.getBalance());
+            stmt.setBigDecimal(5, wallet.getBalance());
             stmt.setString(6, wallet.getCurrency().name());
             stmt.setTimestamp(7, Timestamp.valueOf(wallet.getCreatedAt()));
             stmt.setString(8, wallet.getPasswordHash());
@@ -47,7 +47,7 @@ public class WalletRepository implements IWalletRepository {
                 Wallet wallet = new Wallet(model.enums.Currency.valueOf(rs.getString("type")),
                         rs.getString("address"));
 
-                wallet.setBalance(rs.getDouble("balance"));
+                wallet.setBalance(rs.getBigDecimal("balance"));
                 return Optional.of(wallet);
             }
         } catch (SQLException e) {
@@ -64,7 +64,7 @@ public class WalletRepository implements IWalletRepository {
             while (rs.next()) {
                 Wallet wallet = new Wallet(model.enums.Currency.valueOf(rs.getString("type")), rs.getString("address"));
 
-                wallet.setBalance(rs.getDouble("balance"));
+                wallet.setBalance(rs.getBigDecimal("balance"));
                 wallets.add(wallet);
             }
         } catch (SQLException e) {
@@ -79,7 +79,7 @@ public class WalletRepository implements IWalletRepository {
                 .prepareStatement(
                         "UPDATE wallets SET address = ?, balance = ?, currency = ?::currency_enu, WHERE id = ?::uuid")) {
             stmt.setString(1, wallet.getAddress());
-            stmt.setDouble(2, wallet.getBalance());
+            stmt.setBigDecimal(2, wallet.getBalance());
             stmt.setString(3, wallet.getCurrency().name());
             stmt.setString(4, wallet.getId());
             stmt.executeUpdate();
@@ -101,7 +101,7 @@ public class WalletRepository implements IWalletRepository {
 
     @Override
     public boolean existsByAddress(String address) {
-        String sql = "SELECT COUNT(*) FROM wallets WHERE address = ?";
+        String sql = "SELECT * FROM wallets WHERE address = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, address);
@@ -194,10 +194,10 @@ public class WalletRepository implements IWalletRepository {
                 .address(rs.getString("address"))
                 .ownerName(rs.getString("owner_name"))
                 .wtName(rs.getString("wt_name"))
-                .balance(rs.getBigDecimal("balance").doubleValue()) // BigDecimal → Double
+                .balance(rs.getBigDecimal("balance"))
                 .currency(Currency.valueOf(rs.getString("currency").toUpperCase()))
                 .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
-                .passwordHash(rs.getString("password")) // if you want to pull password from DB too
+                .passwordHash(rs.getString("password"))
                 .build();
     }
 

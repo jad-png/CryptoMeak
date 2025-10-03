@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ITransactionService {
-    Transaction createTransaction(String srdAddress, String desAddress, BigDecimal amount, TxPriority oriority, Currency currency);
+    Transaction createTransaction(Transaction tx);
     Optional<Transaction> getTransactionById(UUID id);
     List<Transaction> getAllTransactions();
     List<Transaction> getTxsBySrcAddress(String srcAddress);

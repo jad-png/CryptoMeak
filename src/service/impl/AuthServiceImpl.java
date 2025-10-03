@@ -51,7 +51,6 @@ public class AuthServiceImpl {
 
             wtRepo.save(wt);
 
-
             return AuthResult.success(wt, "Wallet save successfully");
         } catch (Exception e) {
             return AuthResult.error("Error while saving: " + e.getMessage());
@@ -62,13 +61,13 @@ public class AuthServiceImpl {
         try {
             Optional<Wallet> wtOpt = wtRepo.findByAddress(wtAddress);
 
-            
-            
+            // Optional<Wallet> wtOpt2 = wtRepo.findById(wtOpt.get().getId());
+
             if (!wtOpt.isPresent()) {
-                return AuthResult.error("Wallet not found");
+                return AuthResult.error("Wallet not found (address)");
             }
-                        
-            System.err.println(wtOpt.get().getPasswordHash());
+
+            System.out.println(wtOpt.get().getPasswordHash());
 
             if (!PasswordUtil.verifyPassword(pswrd, wtOpt.get().getPasswordHash())) {
                 return AuthResult.error("Wrong password");

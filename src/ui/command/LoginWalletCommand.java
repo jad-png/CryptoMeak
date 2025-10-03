@@ -106,3 +106,4 @@ public class LoginWalletCommand implements Command {
         }
     }
 }
+

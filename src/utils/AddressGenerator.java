@@ -1,5 +1,6 @@
 package utils;
 
+import model.Wallet;
 import model.enums.Currency;
 
 import java.security.SecureRandom;
@@ -31,14 +32,14 @@ public class AddressGenerator {
     }
 
 
-    public static String generateAddress(Currency currency) {
-        switch (currency) {
+    public static String generateAddress(Wallet w) {
+        switch (w.getCurrency()) {
             case BITCOIN:
                 return generateBitcoinAddress();
             case ETHEREUM:
                 return generateEthereumAddress();
             default:
-                throw new IllegalArgumentException("Unknown currency: " + currency);
+                throw new IllegalArgumentException("Unknown currency: " + w.getCurrency());
         }
     }
 // TODO: validation

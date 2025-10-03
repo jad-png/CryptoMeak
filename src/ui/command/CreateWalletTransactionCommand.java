@@ -1,5 +1,6 @@
 package ui.command;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 import java.util.UUID;
@@ -48,18 +49,26 @@ public class CreateWalletTransactionCommand implements Command {
 
             // step 2
             // generate walletAddress
-            String walletAddress = AddressGenerator.generateAddress(currency);
+            Wallet tempWallet = new Wallet.Builder()
+                    .id(UUID.randomUUID().toString())
+                    .ownerName(ownerName)
+                    .wtName(walletName)
+                    .currency(currency)
+                    .balance(BigDecimal.ZERO)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            String walletAddress = AddressGenerator.generateAddress(tempWallet);
 
             // step 3
             // create wallet object using builder pattern
             Wallet wallet = new Wallet.Builder()
-                    .id(UUID.randomUUID().toString())
+                    .id(tempWallet.getId())
                     .address(walletAddress)
                     .ownerName(ownerName)
                     .wtName(walletName)
                     .currency(currency)
-                    .balance(0.0)
-                    .createdAt(LocalDateTime.now())
+                    .balance(BigDecimal.ZERO)
+                    .createdAt(tempWallet.getCreatedAt())
                     .build();
 
             displayWalletSummary(wallet);
@@ -239,7 +248,7 @@ public class CreateWalletTransactionCommand implements Command {
     }
 
     private void displaySuccessMessage(AuthResult result, String walletAddress) {
-        System.out.println("\n🎉 WALLET CREATED SUCCESSFULLY!");
+        System.out.println("\nWALLET CREATED SUCCESSFULLY!");
         System.out.println("===========================================================================");
         System.out.printf("%s%n", result.getMessage());
         System.out.printf("Wallet Address: %s%n", walletAddress);
@@ -263,7 +272,7 @@ public class CreateWalletTransactionCommand implements Command {
     }
 
     private void performAutoLogin(CommandContext context, String walletAddress, String password) {
-        System.out.println("\n🔐 Attempting auto-login...");
+        System.out.println("\nAttempting auto-login...");
 
         try {
             AuthResult loginResult = authCon.login(walletAddress, password);

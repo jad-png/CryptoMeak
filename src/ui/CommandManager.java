@@ -2,6 +2,7 @@ package ui;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
@@ -11,7 +12,9 @@ import controller.AuthController;
 import controller.MempoolController;
 import controller.TransactionController;
 import controller.WalletController;
+import model.Transaction;
 import model.Wallet;
+import model.enums.Currency;
 import ui.command.CommandContext;
 import ui.command.CompareFeesCommand;
 import ui.command.CreateTransactionCommand;
@@ -29,11 +32,22 @@ public class CommandManager {
     private final CommandContext context;
     private final Scanner scanner;
 
+    private final AuthController authCon;
+    private final TransactionController txCon;
+    private final WalletController wtCon;
+    private final MempoolController mpCon;
+
     public CommandManager(AuthController authCon, TransactionController txCon, WalletController wtCon,
             MempoolController mpCon) {
         this.commands = new LinkedHashMap<>();
         this.context = new CommandContext();
         this.scanner = new Scanner(System.in);
+
+        this.authCon = authCon;
+        this.txCon = txCon;
+        this.wtCon = wtCon;
+        this.mpCon = mpCon;
+
 
         registerCommands(authCon, txCon, wtCon, mpCon);
     }
@@ -79,7 +93,30 @@ public class CommandManager {
             command.execute(context);
             return true;
         }
+        try {
+            List<Wallet> demoWallets = wtCon.generateInitialWallets();
+            // Optionally, save them to DB if needed
+            for (Wallet w : demoWallets) {
+                wtCon.createWallet(w);
+            }
 
+            // Generate demo transactions
+            List<Transaction> demoTxs = txCon.generateRandomTransactions(5);
+            // Optionally, save them to DB if needed
+            for (Transaction tx : demoTxs) {
+                txCon.createTransaction(
+                    tx.getSourceAddress(),
+                    tx.getDestinationAddress(),
+                    tx.getAmount(),
+                    tx.getPriority(),
+                    tx.getCurrency()
+                );
+            }
+
+            System.out.println("Demo wallets and transactions generated.");
+        } catch (Exception e) {
+            System.err.println("Failed to generate demo wallets/transactions: " + e.getMessage());
+        }
         return false;
     }
 
