@@ -14,7 +14,6 @@ public interface ITransactionService {
     Optional<Transaction> getTransactionById(UUID id);
     List<Transaction> getAllTransactions();
     List<Transaction> getTxsBySrcAddress(String srcAddress);
-    List<Transaction>  getPendingTxs();
     boolean confirmTx(UUID txId);
     boolean rejectTx(UUID txId);
     BigDecimal calculateFee(BigDecimal amount, TxPriority priority, Currency currency);
