@@ -33,8 +33,7 @@ public class TransactionRepository implements ITransactionRepository {
             stmt.setString(7, tx.getPriority().name());
             stmt.setString(8, tx.getCurrency().name());
             stmt.setTimestamp(9, Timestamp.valueOf(tx.getCreatedAt()));
-            stmt.setTimestamp(10, tx.getConfirmedAt() != null ?
-                    Timestamp.valueOf(tx.getConfirmedAt()) : null);
+            stmt.setTimestamp(10, tx.getConfirmedAt() != null ? Timestamp.valueOf(tx.getConfirmedAt()) : null);
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -67,54 +66,15 @@ public class TransactionRepository implements ITransactionRepository {
         List<Transaction> txs = new ArrayList<>();
         String sql = "SELECT * FROM transactions";
 
-
         try (Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
-                while (rs.next()) {
-                    txs.add(mapResultSetToTransaction(rs));
-                }
+            while (rs.next()) {
+                txs.add(mapResultSetToTransaction(rs));
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Database error while loading transactions", e);
         }
         return txs;
-    }
-
-    @Override
-    public void update(Transaction tx) {
-        String sql = "UPDATE transactions SET source_address = ?, destination_address = ?, \" +\n" +
-                "                    \"amount = ?, fee = ?, status = ?, priority = ?, wallet_type = ?, \" +\n" +
-                "                    \"created_at = ?, confirmed_at = ? WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, tx.getSourceAddress());
-            stmt.setString(2, tx.getDestinationAddress());
-            stmt.setBigDecimal(3, tx.getAmount());
-            stmt.setBigDecimal(4, tx.getFee());
-            stmt.setString(5, tx.getStatus().name());
-            stmt.setString(6, tx.getPriority().name());
-            stmt.setString(7, tx.getCurrency().name());
-            stmt.setTimestamp(8, Timestamp.valueOf(tx.getCreatedAt()));
-            stmt.setTimestamp(9, tx.getConfirmedAt() != null ?
-                    Timestamp.valueOf(tx.getConfirmedAt()) : null);
-            stmt.setString(10, tx.getId().toString());
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Database error while updating transaction", e);
-        }
-    }
-
-    @Override
-    public void delete(Transaction tx) {
-        String sql = "DELETE FROM transactions WHERE id = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, tx.getId().toString());
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Database error while deleting transaction", e);
-        }
     }
 
     @Override
@@ -140,7 +100,7 @@ public class TransactionRepository implements ITransactionRepository {
                 txs.add(mapResultSetToTransaction(rs));
             }
         } catch (SQLException e) {
-            throw new  RuntimeException("Database error while loading transactions", e);
+            throw new RuntimeException("Database error while loading transactions", e);
         }
         return txs;
     }
@@ -158,15 +118,53 @@ public class TransactionRepository implements ITransactionRepository {
                 txs.add(mapResultSetToTransaction(rs));
             }
         } catch (SQLException e) {
-            throw new  RuntimeException("Database error while loading transactions", e);
+            throw new RuntimeException("Database error while loading transactions", e);
         }
 
         return txs;
     }
 
     @Override
+    public void update(Transaction tx) {
+        String sql = "UPDATE transactions SET source_address = ?, destination_address = ?, \" +\n" +
+                "                    \"amount = ?, fee = ?, status = ?, priority = ?, wallet_type = ?, \" +\n" +
+                "                    \"created_at = ?, confirmed_at = ? WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, tx.getSourceAddress());
+            stmt.setString(2, tx.getDestinationAddress());
+            stmt.setBigDecimal(3, tx.getAmount());
+            stmt.setBigDecimal(4, tx.getFee());
+            stmt.setString(5, tx.getStatus().name());
+            stmt.setString(6, tx.getPriority().name());
+            stmt.setString(7, tx.getCurrency().name());
+            stmt.setTimestamp(8, Timestamp.valueOf(tx.getCreatedAt()));
+            stmt.setTimestamp(9, tx.getConfirmedAt() != null ? Timestamp.valueOf(tx.getConfirmedAt()) : null);
+            stmt.setString(10, tx.getId().toString());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error while updating transaction", e);
+        }
+    }
+
+    @Override
+    public void delete(Transaction tx) {
+        String sql = "DELETE FROM transactions WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, tx.getId().toString());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error while deleting transaction", e);
+        }
+    }
+
+    @Override
     public boolean existingPendingTx(String srcAddress) {
-        // TODO: add foreign key of wallet in the transactions table for ez extracting exisiting pending txs
+        // TODO: add foreign key of wallet in the transactions table for ez extracting
+        // exisiting pending txs
         String sql = "SELECT * FROM transactions WHERE status = ? ORDER BY created_at DESC";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -175,7 +173,7 @@ public class TransactionRepository implements ITransactionRepository {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-               return rs.getInt(1) > 0;
+                return rs.getInt(1) > 0;
             }
 
         } catch (SQLException e) {
@@ -212,8 +210,79 @@ public class TransactionRepository implements ITransactionRepository {
                 TxPriority.valueOf(rs.getString("priority")),
                 Currency.valueOf(rs.getString("wallet_type")),
                 rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getTimestamp("confirmed_at") != null ?
-                        rs.getTimestamp("confirmed_at").toLocalDateTime() : null
-        );
+                rs.getTimestamp("confirmed_at") != null ? rs.getTimestamp("confirmed_at").toLocalDateTime() : null);
+    }
+
+    // mempool specific methods
+    public List<Transaction> findPendingTransactionsSortedByFees() {
+        // find pen txs and sorted based on fees
+        List<Transaction> txs = new ArrayList<>();
+        String sql = "SELECT * FROM transactions WHERE status = 'PENDING' ORDER BY fee DESC, created_at ASC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                txs.add(mapResultSetToTransaction(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error while loading pending transactions", e);
+        }
+
+        return txs;
+    }
+
+    public List<Transaction> findPendingTransactionsByAddress(String address) {
+        // finding pending txs based on wallet address
+        List<Transaction> txs = new ArrayList<>();
+        String sql = "SELECT * FROM transactions WHERE status = 'PENDING' AND address = ? ORDER BY fee DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, address);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                txs.add(mapResultSetToTransaction(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("", e);
+        }
+
+        return txs;
+    }
+
+    public int getTransactionPosition(String txId) {
+        String sql = "SELECT position FROM (" +
+                "SELECT id, ROW_NUMBER() OVER (ORDER BY fee DESC, created_at ASC) as position " +
+                "FROM transactions WHERE status = 'PENDING'" +
+                ") AS ranked WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, txId);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("position");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error while getting transaction position", e);
+        }
+        return -1; // not found
+    }
+
+    public int countPendingTransactions() {
+        // count the total of pending txs
+        String sql = "SELECT COUNT (*) as count FROM transactions WHERE status = 'PENDING'";
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error while counting pending transactions", e);
+        }
+        return 0;
     }
 }
