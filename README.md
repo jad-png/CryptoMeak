@@ -34,6 +34,12 @@ CryptoMeak simulates a cryptocurrency wallet system with support for Bitcoin and
 
 ---
 
+## UML Class Diagram
+
+![UML Class Diagram](images/Main.png)
+
+---
+
 ## How to Build and Run
 
 ### **Prerequisites**
