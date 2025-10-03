@@ -1,7 +1,6 @@
 package repository;
 
 import config.Database;
-import jdk.internal.util.xml.impl.ReaderUTF8;
 import model.Wallet;
 import model.enums.Currency;
 import repository.interfaces.IWalletRepository;
@@ -22,14 +21,17 @@ public class WalletRepository implements IWalletRepository {
         }
     }
 
-    @Override
     public void save(Wallet wallet) {
-        try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO wallets (id, address, balance, type, created_at) VALUES (?, ?, ?, ?, ?)")) {
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "INSERT INTO wallets (id, address, owner_name, wt_name, balance, currency, created_at, password) VALUES (?::uuid, ?, ?, ?, ?, ?::currency_enum, ?, ?)")) {
             stmt.setString(1, wallet.getId());
             stmt.setString(2, wallet.getAddress());
-            stmt.setDouble(3, wallet.getBalance());
-            stmt.setString(4, wallet.getType().name());
-            stmt.setTimestamp(5, Timestamp.valueOf(wallet.getCreatedAt()));
+            stmt.setString(3, wallet.getOwnerName());
+            stmt.setString(4, wallet.getWtName());
+            stmt.setDouble(5, wallet.getBalance());
+            stmt.setString(6, wallet.getCurrency().name());
+            stmt.setTimestamp(7, Timestamp.valueOf(wallet.getCreatedAt()));
+            stmt.setString(8, wallet.getPasswordHash());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,7 +40,7 @@ public class WalletRepository implements IWalletRepository {
 
     @Override
     public Optional<Wallet> findById(String id) {
-        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM wallets WHERE id = ?")) {
+        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM wallets WHERE id = ?::uuid")) {
             stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -56,37 +58,40 @@ public class WalletRepository implements IWalletRepository {
 
     @Override
     public List<Wallet> findAll() {
-            List<Wallet> wallets = new ArrayList<>();
-            try (Statement stmt = conn.createStatement()) {
-                ResultSet rs = stmt.executeQuery("SELECT * FROM wallets");
-                while (rs.next()) {
-                    Wallet wallet = new Wallet(model.enums.Currency.valueOf(rs.getString("type")), rs.getString("address"));
+        List<Wallet> wallets = new ArrayList<>();
+        try (Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM wallets");
+            while (rs.next()) {
+                Wallet wallet = new Wallet(model.enums.Currency.valueOf(rs.getString("type")), rs.getString("address"));
 
-                    wallet.setBalance(rs.getDouble("balance"));
-                    wallets.add(wallet);
-                }
-        } catch (SQLException e) {
-                e.printStackTrace();
+                wallet.setBalance(rs.getDouble("balance"));
+                wallets.add(wallet);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return wallets;
     }
 
     @Override
     public void update(Wallet wallet) {
-        try (PreparedStatement stmt = conn.prepareStatement("UPDATE wallets SET address = ?, balance = ?, type = ? WHERE id = ?")) {
+        try (PreparedStatement stmt = conn
+                .prepareStatement(
+                        "UPDATE wallets SET address = ?, balance = ?, currency = ?::currency_enu, WHERE id = ?::uuid")) {
             stmt.setString(1, wallet.getAddress());
             stmt.setDouble(2, wallet.getBalance());
-            stmt.setString(3, wallet.getType().name());
+            stmt.setString(3, wallet.getCurrency().name());
             stmt.setString(4, wallet.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
     @Override
     public void delete(Wallet wallet) {
         try (PreparedStatement stmt = conn.prepareStatement(
-                "DELETE FROM wallets WHERE id = ?")) {
+                "DELETE FROM wallets WHERE id = ?::uuid")) {
             stmt.setString(1, wallet.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -182,16 +187,18 @@ public class WalletRepository implements IWalletRepository {
         }
     }
 
-    //TODO: util method to map results into wallet entity
+    // TODO: util method to map results into wallet entity
     private Wallet mapResultSetToWallet(ResultSet rs) throws SQLException {
-        return new Wallet(
-                UUID.fromString(rs.getString("id")),
-                rs.getString("address"),
-                Currency.valueOf(rs.getString("currency")),
-                rs.getString("owner_name"),
-                rs.getBigDecimal("balance"),
-                rs.getTimestamp("created_at").toLocalDateTime()
-        );
+        return new Wallet.Builder()
+                .id(rs.getString("id"))
+                .address(rs.getString("address"))
+                .ownerName(rs.getString("owner_name"))
+                .wtName(rs.getString("wt_name"))
+                .balance(rs.getBigDecimal("balance").doubleValue()) // BigDecimal → Double
+                .currency(Currency.valueOf(rs.getString("currency").toUpperCase()))
+                .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                .passwordHash(rs.getString("password")) // if you want to pull password from DB too
+                .build();
     }
 
     public Optional<Wallet> findByAddress(String address) {
@@ -200,12 +207,11 @@ public class WalletRepository implements IWalletRepository {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, address);
             ResultSet rs = stmt.executeQuery();
-
             if (rs.next()) {
                 return Optional.of(mapResultSetToWallet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Database error while finding wallet by address", e);
+            throw new RuntimeException("Database error while finding wallet by address" + e.getMessage());
         }
 
         return Optional.empty();
@@ -213,7 +219,7 @@ public class WalletRepository implements IWalletRepository {
 
     public List<Wallet> findByCurrency(Currency currency) {
         List<Wallet> wallets = new ArrayList<>();
-        String sql = "SELECT * FROM wallets WHERE currency = ?";
+        String sql = "SELECT * FROM wallets WHERE currency = ?::currency_enum";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, currency.name());
