@@ -26,7 +26,7 @@ public class RegisterWalletCommand implements Command {
     }
 
     public String getName() {
-        return "Register";
+        return "register";
     }
 
     public String getDescription() {

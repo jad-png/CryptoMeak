@@ -22,11 +22,11 @@ public class CreateWalletTransactionCommand implements Command {
     }
 
     public String getName() {
-        return "Create Wallet";
+        return "create wallet";
     }
 
     public String getDescription() {
-        return "Create a new wallet";
+        return "create a new wallet";
     }
 
     public void execute(CommandContext context) {

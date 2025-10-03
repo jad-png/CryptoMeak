@@ -18,7 +18,7 @@ public class LoginWalletCommand implements Command {
     }
 
     public String getName() {
-        return "Login";
+        return "login";
     }
 
     public String getDescription() {

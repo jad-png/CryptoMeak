@@ -203,7 +203,13 @@ public class TransactionService implements ITransactionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    // helper
+    private List<Wallet> getAvailableWallets() {
+        return wtRepo.findAll();
+    }
+
     public Transaction generateRandomTransaction() {
+        List<Wallet> wallets = getAvailableWallets(); // fetch fresh from DB
         if (wallets.size() < 2)
             throw new IllegalStateException("At least two wallets required");
 
@@ -244,7 +250,7 @@ public class TransactionService implements ITransactionService {
     // Generate N random transactions
     public List<Transaction> generateRandomTransactions(int n) {
         return java.util.stream.IntStream.range(0, n)
-            .mapToObj(i -> generateRandomTransaction())
-            .collect(Collectors.toList());
+                .mapToObj(i -> generateRandomTransaction())
+                .collect(Collectors.toList());
     }
 }

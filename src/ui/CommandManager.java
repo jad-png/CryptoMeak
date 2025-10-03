@@ -48,6 +48,31 @@ public class CommandManager {
         this.wtCon = wtCon;
         this.mpCon = mpCon;
 
+        // --- generate demo wts and txs
+
+        try {
+            // demo wts
+            List<Wallet> demoWallets = wtCon.generateInitialWallets();
+            for (Wallet w : demoWallets) {
+                wtCon.createWallet(w);
+            }
+
+            // demo txs
+            List<Transaction> demoTxs = txCon.generateRandomTransactions(5);
+            for (Transaction tx : demoTxs) {
+                txCon.createTransaction(
+                        tx.getSourceAddress(),
+                        tx.getDestinationAddress(),
+                        tx.getAmount(),
+                        tx.getPriority(),
+                        tx.getCurrency());
+            }
+            System.out.println(demoWallets);
+            System.out.println(demoTxs);
+            System.out.println("Demo wallets and transactions generated.");
+        } catch (Exception e) {
+            System.err.println("Failed to generate demo wallets/transactions: " + e.getMessage());
+        }
 
         registerCommands(authCon, txCon, wtCon, mpCon);
     }
@@ -92,30 +117,6 @@ public class CommandManager {
         if (command != null) {
             command.execute(context);
             return true;
-        }
-        try {
-            List<Wallet> demoWallets = wtCon.generateInitialWallets();
-            // Optionally, save them to DB if needed
-            for (Wallet w : demoWallets) {
-                wtCon.createWallet(w);
-            }
-
-            // Generate demo transactions
-            List<Transaction> demoTxs = txCon.generateRandomTransactions(5);
-            // Optionally, save them to DB if needed
-            for (Transaction tx : demoTxs) {
-                txCon.createTransaction(
-                    tx.getSourceAddress(),
-                    tx.getDestinationAddress(),
-                    tx.getAmount(),
-                    tx.getPriority(),
-                    tx.getCurrency()
-                );
-            }
-
-            System.out.println("Demo wallets and transactions generated.");
-        } catch (Exception e) {
-            System.err.println("Failed to generate demo wallets/transactions: " + e.getMessage());
         }
         return false;
     }

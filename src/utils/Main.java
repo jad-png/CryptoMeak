@@ -78,8 +78,6 @@ public class Main {
             DIContainer DIC = DIContainer.getInstance();
             CommandManager cmdManager = DIC.getCommandManager();
             
-            List<Wallet> wts = DIC.getWtSer().generateInitialWallets();
-
             while (true) {
                 System.out.print("/n Commande >");
                 String input = cmdManager.getScanner().nextLine().trim();

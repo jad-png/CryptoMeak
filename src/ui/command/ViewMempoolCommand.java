@@ -16,7 +16,7 @@ public class ViewMempoolCommand implements Command {
     }
     
     public String getName() {
-        return "View Mempool Status";
+        return "view mempool status";
     }
     
     public String getDescription() {

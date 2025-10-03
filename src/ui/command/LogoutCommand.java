@@ -17,7 +17,7 @@ public class LogoutCommand implements Command {
     }
 
     public String getName() {
-        return "Logout";
+        return "logout";
     }
 
     public String getDescription() {

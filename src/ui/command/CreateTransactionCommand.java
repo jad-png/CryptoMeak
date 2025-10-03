@@ -20,7 +20,7 @@ public class CreateTransactionCommand implements Command {
     }
 
     public String getName() {
-        return "Create Transaction";
+        return "create transaction";
     }
 
     public String getDescription() {

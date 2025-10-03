@@ -19,7 +19,7 @@ public class CompareFeesCommand implements Command {
     }
     
     public String getName() {
-        return "Compare Fee Levels";
+        return "compare fee levels";
     }
     
     public String getDescription() {

@@ -20,7 +20,7 @@ public class ViewMempoolPositionCommand implements Command {
     }
     
     public String getName() {
-        return "View My Position in Mempool";
+        return "view my position in mempool";
     }
     
     public String getDescription() {
